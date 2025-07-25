@@ -15,6 +15,7 @@ const App: React.FC = () => {
   const [isStateSelected, setIsStateSelected] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [toast, setToast] = useState<{ message: string; id: number } | null>(null);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   // Verifica o localStorage ao carregar a aplicação
   useEffect(() => {
@@ -41,12 +42,10 @@ const App: React.FC = () => {
       }
       return [...prevItems, { product, quantity: 1 }];
     });
-    // Exibe o toast com mensagem
     setToast({
       message: `Produto ${product.name} adicionado ao carrinho!`,
-      id: Date.now(), // ID único para cada toast
+      id: Date.now(),
     });
-    // Remove o toast após 3 segundos
     setTimeout(() => {
       setToast(null);
     }, 3000);
@@ -64,6 +63,14 @@ const App: React.FC = () => {
     setIsStateSelected(false);
   };
 
+  const openCheckout = () => {
+    setIsCheckoutOpen(true);
+  };
+
+  const closeCheckout = () => {
+    setIsCheckoutOpen(false);
+  };
+
   return (
     <Router>
       <div className="min-h-screen bg-burger-dark">
@@ -74,21 +81,28 @@ const App: React.FC = () => {
           <Route
             path="/"
             element={
-              !isStateSelected ? (
-                <StateSelector onSelect={handleStateSelect} />
-              ) : (
-                <>
-                  <Header resetLocation={resetLocation} />
-                  <Menu categories={mockCategories} addToCart={addToCart} />
-                  <Promotions promotions={mockPromotions} addToCart={addToCart} />
-                  <Cart cartItems={cartItems} removeFromCart={removeFromCart} />
-                </>
-              )
+              <>
+                {!isStateSelected ? (
+                  <StateSelector onSelect={handleStateSelect} />
+                ) : (
+                  <>
+                    <Header resetLocation={resetLocation} />
+                    <Menu categories={mockCategories} addToCart={addToCart} />
+                    <Promotions promotions={mockPromotions} addToCart={addToCart} />
+                    <Cart
+                      cartItems={cartItems}
+                      removeFromCart={removeFromCart}
+                      openCheckout={openCheckout}
+                    />
+                  </>
+                )}
+                <AnimatePresence>
+                  {isCheckoutOpen && (
+                    <Checkout cartItems={cartItems} onClose={closeCheckout} />
+                  )}
+                </AnimatePresence>
+              </>
             }
-          />
-          <Route
-            path="/checkout"
-            element={<Checkout cartItems={cartItems} />}
           />
         </Routes>
       </div>

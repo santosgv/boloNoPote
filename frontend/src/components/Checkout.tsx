@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { FaTimes } from 'react-icons/fa';
 import type { CartItem, Address } from '../types';
 
 interface CheckoutProps {
   cartItems: CartItem[];
+  onClose: () => void;
 }
 
-const Checkout: React.FC<CheckoutProps> = ({ cartItems }) => {
+const Checkout: React.FC<CheckoutProps> = ({ cartItems, onClose }) => {
   const [address, setAddress] = useState<Address>({
     street: '',
     number: '',
@@ -29,6 +30,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems }) => {
     // Aqui você integrará com o backend Django para enviar o endereço e gerar o Pix
     console.log('Endereço:', address);
     console.log('Itens do carrinho:', cartItems);
+    onClose(); // Fecha o modal após o envio (pode ser ajustado conforme a integração com o backend)
   };
 
   const brazilianStates = [
@@ -37,32 +39,40 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems }) => {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 b bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-burger-dark p-8 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        exit={{ opacity: 0, scale: 0.8 }}
+        className="bg-gray-100 p-8 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative"
       >
-        <h2 className="text-3xl font-bold text-burger-yellow mb-6 text-center">Finalizar Compra</h2>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-yellow hover:text-red"
+          aria-label="Fechar modal"
+        >
+          <FaTimes className="text-xl" />
+        </button>
+        <h2 className="text-3xl font-bold text-yellow mb-6 text-center">Finalizar Compra</h2>
 
         {/* Resumo do Carrinho */}
         <div className="mb-6">
-          <h3 className="text-xl font-semibold text-burger-orange mb-2">Itens no Carrinho</h3>
+          <h3 className="text-xl font-semibold text-orange mb-2">Itens no Carrinho</h3>
           {cartItems.length === 0 ? (
             <p className="text-gray-300">Carrinho vazio</p>
           ) : (
             <div>
               {cartItems.map((item) => (
                 <div key={item.product.id} className="flex justify-between mb-2">
-                  <p className="text-sm text-burger-yellow">
+                  <p className="text-sm text-yellow">
                     {item.product.name} x {item.quantity}
                   </p>
-                  <p className="text-sm text-burger-orange">
+                  <p className="text-sm text-orange">
                     R$ {(item.product.price * item.quantity).toFixed(2)}
                   </p>
                 </div>
               ))}
-              <p className="text-lg font-bold text-burger-orange mt-2">
+              <p className="text-lg font-bold text-orange mt-2">
                 Total: R$ {total.toFixed(2)}
               </p>
             </div>
@@ -71,7 +81,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems }) => {
 
         {/* Formulário de Endereço */}
         <form onSubmit={handleSubmit} className="mb-6">
-          <h3 className="text-xl font-semibold text-burger-orange mb-2">Endereço de Entrega</h3>
+          <h3 className="text-xl font-semibold text-orange mb-2">Endereço de Entrega</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
               type="text"
@@ -79,7 +89,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems }) => {
               value={address.street}
               onChange={handleInputChange}
               placeholder="Rua"
-              className="p-3 rounded-lg bg-white text-burger-dark focus:outline-none focus:ring-2 focus:ring-burger-yellow"
+              className="p-3 rounded-lg bg-white text-dark focus:outline-none focus:ring-2 focus:ring-yellow"
               required
             />
             <input
@@ -88,7 +98,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems }) => {
               value={address.number}
               onChange={handleInputChange}
               placeholder="Número"
-              className="p-3 rounded-lg bg-white text-burger-dark focus:outline-none focus:ring-2 focus:ring-burger-yellow"
+              className="p-3 rounded-lg bg-white text-dark focus:outline-none focus:ring-2 focus:ring-yellow"
               required
             />
             <input
@@ -97,7 +107,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems }) => {
               value={address.neighborhood}
               onChange={handleInputChange}
               placeholder="Bairro"
-              className="p-3 rounded-lg bg-white text-burger-dark focus:outline-none focus:ring-2 focus:ring-burger-yellow"
+              className="p-3 rounded-lg bg-white text-dark focus:outline-none focus:ring-2 focus:ring-yellow"
               required
             />
             <input
@@ -106,14 +116,14 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems }) => {
               value={address.city}
               onChange={handleInputChange}
               placeholder="Cidade"
-              className="p-3 rounded-lg bg-white text-burger-dark focus:outline-none focus:ring-2 focus:ring-burger-yellow"
+              className="p-3 rounded-lg bg-white text-dark focus:outline-none focus:ring-2 focus:ring-yellow"
               required
             />
             <select
               name="state"
               value={address.state}
               onChange={handleInputChange}
-              className="p-3 rounded-lg bg-white text-burger-dark focus:outline-none focus:ring-2 focus:ring-burger-yellow"
+              className="p-3 rounded-lg bg-white text-dark focus:outline-none focus:ring-2 focus:ring-yellow"
               required
             >
               <option value="" disabled>
@@ -131,40 +141,29 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems }) => {
               value={address.zipCode}
               onChange={handleInputChange}
               placeholder="CEP"
-              className="p-3 rounded-lg bg-white text-burger-dark focus:outline-none focus:ring-2 focus:ring-burger-yellow"
+              className="p-3 rounded-lg bg-white text-dark focus:outline-none focus:ring-2 focus:ring-yellow"
               required
             />
           </div>
-        </form>
-
-        {/* Seção de Pagamento via Pix */}
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold text-burger-orange mb-2">Pagamento via Pix</h3>
-          <div className="bg-gray-700 p-4 rounded-lg text-center">
-            <p className="text-gray-300">
-              Integração com Pix será implementada no backend Django.
-            </p>
-            <p className="text-gray-300 mt-2">
-              Após preencher o endereço, clique em "Confirmar Pedido" para gerar o QR code.
-            </p>
+          {/* Seção de Pagamento via Pix */}
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-orange mb-2">Pagamento via Pix</h3>
+            <div className="bg-gray-700 p-4 rounded-lg text-center">
+              <p className="text-gray-300">
+                Integração com Pix será implementada no backend Django.
+              </p>
+              <p className="text-gray-300 mt-2">
+                Após preencher o endereço, clique em "Confirmar Pedido" para gerar o QR code.
+              </p>
+            </div>
           </div>
-        </div>
-
-        {/* Botões */}
-        <div className="flex justify-between">
-          <Link
-            to="/"
-            className="px-4 py-2 bg-burger-red text-white rounded-lg hover:bg-burger-yellow hover:text-burger-dark transition-colors"
-          >
-            Voltar
-          </Link>
           <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-burger-yellow text-burger-dark rounded-lg hover:bg-burger-red hover:text-white transition-colors"
+            type="submit"
+            className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-red hover:text-white transition-colors"
           >
             Confirmar Pedido
           </button>
-        </div>
+        </form>
       </motion.div>
     </div>
   );
