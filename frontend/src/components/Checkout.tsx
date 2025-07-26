@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import type { CartItem, Address } from '../types';
+import {QRCodeSVG} from 'qrcode.react';
 
 interface CheckoutProps {
   cartItems: CartItem[];
@@ -11,7 +12,10 @@ interface CheckoutProps {
   sessionId: string | null;
 }
 
+
 const Checkout: React.FC<CheckoutProps> = ({ cartItems, onClose, sessionId }) => {
+  const [brcode, setBrcode] = useState<string | null>(null);
+  const [timer, setTimer] = useState<number>(30); // 2 minutos
   const [address, setAddress] = useState<Address>({
     street: '',
     number: '',
@@ -60,10 +64,33 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onClose, sessionId }) =>
     }
   };
 
+    const gerarQrCodePix = async () => {
+  try {
+    const response = await axios.post('http://localhost:8000/api/gerar-pix/', {
+      valor: total.toFixed(2),
+      session_id: sessionId,
+    });
+    setBrcode(response.data.brcode);
+  } catch (error) {
+    console.error('Erro ao gerar QR Code PIX:', error);
+  }
+};
+
+useEffect(() => {
+  if (brcode && timer > 0) {
+    const countdown = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(countdown);
+  }
+}, [brcode, timer]);
+
   const brazilianStates = [
     'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA',
     'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
   ];
+
+
 
   return (
     <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -183,19 +210,48 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onClose, sessionId }) =>
             />
           </div>
           {/* Seção de Pagamento via Pix */}
-          <div className="mb-6">
-            <h3 className="text-xl font-semibold text-burger-orange mb-2">Pagamento via Pix</h3>
-            <div className="bg-gray-700 p-4 rounded-lg text-center">
-              <p className="text-gray-300">
-                Após confirmar o pedido, você receberá uma chave Pix para pagamento.
-              </p>
-            </div>
+          {!brcode && (
+            <button
+              type="button"
+              onClick={gerarQrCodePix}
+              className="mb-4 w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            >
+              Gerar QR Code Pix
+            </button>
+          )}
+{brcode && (
+  <div className="flex flex-col items-center my-4 space-y-4">
+    <QRCodeSVG value={brcode} size={256} />
+
+    <div className="w-full max-w-md flex gap-2 items-center">
+      <input
+        type="text"
+        value={brcode}
+        readOnly
+        className="flex-1 bg-gray-200 text-gray-700 text-sm px-3 py-2 rounded-md shadow-sm focus:outline-none"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          navigator.clipboard.writeText(brcode);
+        }}
+        className="px-3 py-2 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors"
+      >
+              Copiar QR Code
+            </button>
           </div>
-          <button
+        </div>
+      )}
+            <button
             type="submit"
-            className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-red hover:text-white transition-colors"
+            disabled={!brcode || timer > 0}
+            className={`w-full px-4 py-2 rounded-lg transition-colors ${
+              !brcode || timer > 0
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-500 hover:bg-green-600 text-white'
+            }`}
           >
-            Confirmar Pedido
+            {timer > 0 ? `Aguardando pagamento (${timer}s)` : 'Confirmar Pedido'}
           </button>
         </form>
       </motion.div>
