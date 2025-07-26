@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaShoppingCart, FaTimes } from 'react-icons/fa';
+import { FaShoppingCart } from 'react-icons/fa';
 import type { CartItem } from '../types';
 
 interface CartProps {
@@ -42,28 +42,20 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, openCheckout }) 
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className={`fixed bg-gray-100 bottom-4 right-4 rounded-lg shadow-lg p-4 z-40
+            className={`fixed bg-gray-50 bottom-4 right-4 rounded-lg shadow-lg p-4 z-40
               ${isCartOpen ? 'w-full max-w-[90vw] max-h-[70vh] overflow-y-auto' : 'w-80 max-h-96 overflow-y-auto md:w-80'}
               md:md:max-h-96 md:overflow-y-auto md:w-80
               ${isCartOpen ? 'top-0 md:top-auto bg-opacity-50 backdrop-blur-sm flex items-center justify-center md: md:backdrop-blur-none' : ''}`}
           >
             <div className="relative">
               {/* Botão de fechar para mobile */}
-              {isCartOpen && (
-                <button
-                  className="absolute top-2 right-2 text-yellow md:hidden"
-                  onClick={toggleCart}
-                  aria-label="Fechar carrinho"
-                >
-                  <FaTimes className="text-xl" />
-                </button>
-              )}
+              {isCartOpen }
               <div className="flex items-center mb-4">
                 <FaShoppingCart className="text-2xl text-yellow mr-2" />
-                <h2 className="text-xl font-bold text-yellow">Carrinho</h2>
+                
               </div>
               {cartItems.length === 0 ? (
-                <p className="text-gray-500">Carrinho vazio</p>
+                <p className="text-gray-900">Carrinho vazio</p>
               ) : (
                 <div>
                   {cartItems.map((item) => (
@@ -71,18 +63,18 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, openCheckout }) 
                       <div>
                         <p className="text-sm font-semibold text-yellow">{item.product.name}</p>
                         <p className="text-xs text-gray-500">
-                          R$ {item.product.price.toFixed(2)} x {item.quantity}
+                          R$ {item.product.price} x {item.quantity}
                         </p>
                       </div>
                       <button
                         onClick={() => removeFromCart(item.product.id)}
-                        className="text-red hover:text-yellow"
+                        className="text-red-600 hover:text-red"
                       >
-                        Remover
+                        X
                       </button>
                     </div>
                   ))}
-                  <div className="border-t border-gray-600 pt-2 mt-2">
+                  <div className="border-t border-gray-50 pt-2 mt-2">
                     <p className="text-lg font-bold text-orange">
                       Total: R$ {total.toFixed(2)}
                     </p>

@@ -51,12 +51,12 @@ const StateSelector: React.FC<StateSelectorProps> = ({ onSelect }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
-        className="bg-burger-dark p-8 rounded-2xl shadow-2xl max-w-md w-full text-center"
+        className="p-8 rounded-2xl shadow-2xl max-w-md w-full text-center"
       >
         <AnimatePresence mode="wait">
           {isLoading ? (

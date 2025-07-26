@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
         className="absolute top-8 left-1/2 transform -translate-x-1/2"
       >
         <img
-          src="https://via.placeholder.com/150"
+          src="https://cdn.pixabay.com/photo/2014/07/15/13/36/coffee-shop-393954_1280.jpg"
           alt="Logo"
           className="w-32 h-32 rounded-full border-4 border-burger-yellow shadow-xl"
         />

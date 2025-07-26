@@ -73,6 +73,20 @@ export const mockCategories: Category[] = [
         price: 6.90,
         image: 'https://cdn.pixabay.com/photo/2019/08/13/20/02/coca-cola-4404130_1280.jpg',
       },
+            {
+        id: 4,
+        name: 'Refrigerante Lata',
+        description: 'Coca-Cola, Sprite ou Guaraná 350ml.',
+        price: 6.90,
+        image: 'https://cdn.pixabay.com/photo/2019/08/13/20/02/coca-cola-4404130_1280.jpg',
+      },
+            {
+        id: 5,
+        name: 'Refrigerante Lata',
+        description: 'Coca-Cola, Sprite ou Guaraná 350ml.',
+        price: 6.90,
+        image: 'https://cdn.pixabay.com/photo/2019/08/13/20/02/coca-cola-4404130_1280.jpg',
+      },
     ],
   },
   {
@@ -81,7 +95,7 @@ export const mockCategories: Category[] = [
     icon: 'FaPizzaSlice',
     products: [
       {
-        id: 4,
+        id: 6,
         name: 'Batata Frita',
         description: 'Porção de batata frita crocante 200g.',
         price: 15.90,
@@ -93,7 +107,7 @@ export const mockCategories: Category[] = [
 
 export const mockPromotions: Product[] = [
   {
-    id: 5,
+    id: 7,
     name: 'Combo do Dia',
     description: 'Burger Clássico + Batata Frita + Refrigerante.',
     price: 39.90,
