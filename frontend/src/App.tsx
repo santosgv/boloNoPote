@@ -6,11 +6,9 @@ import { v4 as uuidv4 } from 'uuid';
 import StateSelector from './components/StateSelector';
 import Header from './components/Header';
 import Menu from './components/Menu';
-import Promotions from './components/Promotions';
 import Cart from './components/Cart';
 import Checkout from './components/Checkout';
 import Toast from './components/Toast';
-import { mockPromotions } from './data/mockData';
 import type { CartItem, Product,Category } from './types';
 import { AnimatePresence } from 'framer-motion';
 
@@ -123,13 +121,13 @@ const App: React.FC = () => {
       console.error('Erro ao remover do carrinho:', error);
       setToast({
         message: 'Erro ao remover o produto do carrinho.',
-        id: Date.Now(),
+        id: Date.now(),
       });
       setTimeout(() => setToast(null), 3000);
     }
   };
 
-  const handleStateSelect = (state: string, city: string) => {
+  const handleStateSelect = () => {
     setIsStateSelected(true);
   };
 

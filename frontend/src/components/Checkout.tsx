@@ -14,22 +14,42 @@ interface CheckoutProps {
 
 
 const Checkout: React.FC<CheckoutProps> = ({ cartItems, onClose, sessionId }) => {
+  const selectedCity = localStorage.getItem('selectedCity');
+  const selectedState = localStorage.getItem('selectedState');
   const [brcode, setBrcode] = useState<string | null>(null);
   const [timer, setTimer] = useState<number>(30); // 2 minutos
   const [address, setAddress] = useState<Address>({
     street: '',
     number: '',
     neighborhood: '',
-    city: '',
-    state: '',
+    city: selectedCity || '',
+    state: selectedState || '',
     zipCode: '',
   });
 
   const total = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setAddress((prev) => ({ ...prev, [name]: value }));
+  };
+
+
+  const copyToClipboard = (text: string) => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      alert('Texto copiado para a área de transferência!');
+    } catch (err) {
+      console.error('Falha ao copiar texto: ', err);
+      alert('Falha ao copiar texto.');
+    } finally {
+      document.body.removeChild(textarea);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,6 +95,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onClose, sessionId }) =>
     console.error('Erro ao gerar QR Code PIX:', error);
   }
 };
+
 
 useEffect(() => {
   if (brcode && timer > 0) {
@@ -209,6 +230,7 @@ useEffect(() => {
               required
             />
           </div>
+          <br />
           {/* Seção de Pagamento via Pix */}
           {!brcode && (
             <button
@@ -232,12 +254,10 @@ useEffect(() => {
       />
       <button
         type="button"
-        onClick={() => {
-          navigator.clipboard.writeText(brcode);
-        }}
-        className="px-3 py-2 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors"
+        onClick={() => copyToClipboard(brcode)}
+        className="px-3 py-2 bg-sky-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors"
       >
-              Copiar QR Code
+              Copiar chave pix
             </button>
           </div>
         </div>
@@ -258,5 +278,7 @@ useEffect(() => {
     </div>
   );
 };
+
+
 
 export default Checkout;

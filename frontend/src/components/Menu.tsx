@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import type { Product, Category } from '../types';
+import type { Product } from '../types';
 
 interface MenuProps {
   categories: { id: number; name: string; products: Product[] }[];
