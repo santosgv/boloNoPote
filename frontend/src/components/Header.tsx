@@ -7,7 +7,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
   return (
-    <div className="relative w-full h-64 bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1550547660-d9450f859349)' }}>
+    <div className="relative w-full h-64 bg-cover bg-center" style={{ backgroundImage: 'url(https://images6.guiadohamburguer.com/fotos/512-micro-hamburgueria/01-entrada-micro-hamburgueria.jpg)' }}>
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -15,10 +15,19 @@ const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
         className="absolute top-8 left-1/2 transform -translate-x-1/2"
       >
         <img
-          src="https://cdn.pixabay.com/photo/2014/07/15/13/36/coffee-shop-393954_1280.jpg"
+          src="./src/assets/logo2.png"
           alt="Logo"
-          className="w-32 h-32 rounded-full border-4 border-burger-yellow shadow-xl"
+          className="w-35 h-35 rounded-full border-yellow shadow-xl"
         />
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-4 text-2xl font-bold text-red-600 text-center"
+        >
+          Burger Lab
+        </motion.h1>
       </motion.div>
       <button
         onClick={resetLocation}
