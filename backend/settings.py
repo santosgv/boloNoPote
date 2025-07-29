@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-p7b+!7-udi@v_lk573j!4#p1gy^ou03l0rx*-w*)&fy9js9oes
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','192.168.18.56:8000']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -58,7 +58,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',  # Porta padrão do Vite/React
     'http://127.0.0.1:3000',
     'http://192.168.18.76',
-    'http://192.168.18.56:3000'
+    'http://192.168.18.56:3000',
+    'http://localhost:3000',
 ]
 
 CORS_ALLOW_CREDENTIALS = True  # Allow sessionid and csrftoken cookies

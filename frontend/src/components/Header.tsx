@@ -15,18 +15,18 @@ const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
         className="absolute top-8 left-1/2 transform -translate-x-1/2"
       >
         <img
-          src="./src/assets/logo2.png"
+          src="./src/assets/11842.jpg"
           alt="Logo"
-          className="w-35 h-35 rounded-full border-yellow shadow-xl"
+          className="w-35 h-35 rounded-full border-4  border-yellow shadow-xl"
         />
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-4 text-2xl font-bold text-red-600 text-center"
+          className="mt-4 text-2xl font-bold text-white text-center"
         >
-          Burger Lab
+          Burger House
         </motion.h1>
       </motion.div>
       <button
