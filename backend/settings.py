@@ -60,6 +60,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://192.168.18.76',
     'http://192.168.18.56:3000',
     'http://localhost:3000',
+    'http://168.231.93.112',
 ]
 
 CORS_ALLOW_CREDENTIALS = True  # Allow sessionid and csrftoken cookies
