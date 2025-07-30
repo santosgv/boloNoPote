@@ -1,4 +1,5 @@
 import React from 'react';
+import logo from '../assets/11842.png'; 
 import { motion } from 'framer-motion';
 
 interface HeaderProps {
@@ -15,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
         className="absolute top-8 left-1/2 transform -translate-x-1/2"
       >
         <img
-          src="./src/assets/11842.png"
+          src={logo}
           alt="Logo"
           className="w-35 h-35 rounded-full border-4  border-yellow shadow-xl"
         />

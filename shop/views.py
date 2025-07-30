@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
 import re
 import json
+from .utils import Payload
 
 
 @api_view(['GET'])
@@ -19,60 +20,38 @@ import json
 def get_csrf_token(request):
     return Response({'message': 'CSRF cookie set'})
 
-def validar_chave_pix(chave):
-    """Valida se a chave PIX é um email válido, CPF, CNPJ, telefone ou chave aleatória"""
-    # Valida email
-    if re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', chave):
-        return True
-    # Valida CPF/CNPJ (apenas dígitos)
-    if chave.isdigit() and (len(chave) == 11 or len(chave) == 14):
-        return True
-    # Valida telefone (+5583999999999)
-    if chave.startswith('+') and chave[1:].isdigit():
-        return True
-    # Valida chave aleatória (UUID)
-    if len(chave) == 36 and '-' in chave:
-        return True
-    return False
-
 @csrf_exempt
 def gerar_pix_qrcode(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            
-            # Validações básicas
             valor = float(data.get('valor', 0))
-            chave_pix = data.get('chave_pix', 'chave_aleatoria')  # Chave PIX pode ser um email, CPF, CNPJ, telefone ou chave aleatória
-            string_pix_banco = ('00020126580014BR.GOV.BCB.PIX01363e04aebc-7948-4390-96e2-1f60a286566e52040000530398654040.015802BR5922Vitor dos Santos Gomes6009SAO PAULO62140510aCNHVn8PV36304BC15')  # String completa gerada pelo banco
             
-            print(f"Valor: {valor}, Chave PIX: {chave_pix}, String PIX do banco: {string_pix_banco}")  # Log para debug
-
-            #if not validar_chave_pix(chave_pix):
-            #    return JsonResponse({'error': 'Chave PIX inválida'}, status=400)
-                
-            if valor <= 0:
-                return JsonResponse({'error': 'Valor deve ser positivo'}, status=400)
-                
-            if not string_pix_banco or len(string_pix_banco) < 30:
-                return JsonResponse({'error': 'String PIX do banco inválida'}, status=400)
+            # Cria o payload sem gerar QR Code
+            payload = Payload(
+                nome='Vitor dos Santos Gomes',
+                chavepix='01858082633',
+                valor=f'{valor}',
+                cidade='Burger House',
+                txtId='LOJA01'
+            )
             
-            # Se a string do banco for válida, retorne ela diretamente
+            string_pix = payload.gerarPayload(gerar_qrcode=False)
+            
             return JsonResponse({
-                'brcode': string_pix_banco,
+                'brcode': string_pix,
                 'valor': f"{valor:.2f}",
-                'chave': chave_pix,
-                'mensagem': 'String PIX gerada pelo banco'
+                'mensagem': 'Payload PIX gerado com sucesso'
             })
             
         except json.JSONDecodeError:
-            print("Erro ao decodificar JSON")  # Log para debug
+            print("Erro ao decodificar JSON")
             return JsonResponse({'error': 'JSON inválido'}, status=400)
-        except ValueError:
-            print
+        except ValueError as ve:
+            print(f"Erro de valor: {ve}")
             return JsonResponse({'error': 'Valor inválido'}, status=400)
         except Exception as e:
-            print(f"Erro ao processar PIX: {str(e)}")  # Log para debug
+            print(f"Erro ao processar PIX: {str(e)}")
             return JsonResponse({'error': 'Erro interno ao processar a requisição'}, status=500)
     
     return JsonResponse({'error': 'Método não permitido'}, status=405)
