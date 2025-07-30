@@ -62,7 +62,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onClose, sessionId }) =>
       const csrfToken = Cookies.get('csrftoken') || '';
       console.log('Creating order, session_id:', sessionId); // Debug
       const response = await axios.post(
-        'http://http://168.231.93.112:8000/api/order/',
+        'http://http://168.231.93.112/api/order/',
         {
           address: {
             street: address.street,
@@ -86,7 +86,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onClose, sessionId }) =>
 
     const gerarQrCodePix = async () => {
   try {
-    const response = await axios.post('http://168.231.93.112:8000/api/gerar-pix/', {
+    const response = await axios.post('http://168.231.93.112/api/gerar-pix/', {
       valor: total.toFixed(2),
       session_id: sessionId,
     });

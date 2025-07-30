@@ -40,22 +40,22 @@ const App: React.FC = () => {
     }
 
     // Fetch CSRF token
-    axios.get('http://168.231.93.112:8000/api/csrf/')
+    axios.get('http://168.231.93.112/api/csrf/')
       .then(() => {
         console.log('CSRF cookie set'); // Debug
 
         // Fetch categories
-        axios.get('http://168.231.93.112:8000/api/categories/')
+        axios.get('http://168.231.93.112/api/categories/')
           .then((response) => setCategories(response.data))
           .catch((error) => console.error('Erro ao buscar categorias:', error));
 
         // Fetch products
-        axios.get('http://168.231.93.112:8000/api/products/')
+        axios.get('http://168.231.93.112/api/products/')
           .then((response) => setProducts(response.data))
           .catch((error) => console.error('Erro ao buscar produtos:', error));
 
         // Fetch cart items
-        axios.get(`http://168.231.93.112:8000/api/cart/?session_id=${storedSessionId}`)
+        axios.get(`http://168.231.93.112/api/cart/?session_id=${storedSessionId}`)
           .then((response) => setCartItems(response.data))
           .catch((error) => console.error('Erro ao buscar carrinho:', error));
       })
@@ -68,7 +68,7 @@ const App: React.FC = () => {
       const csrfToken = Cookies.get('csrftoken') || '';
       console.log('Adding to cart, session_id:', sessionId); // Debug
       const response = await axios.post(
-        'http://168.231.93.112:8000/api/cart/',
+        'http://168.231.93.112/api/cart/',
         { product_id: product.id, quantity: 1, session_id: sessionId },
         { headers: { 'X-CSRFToken': csrfToken } }
       );
@@ -108,7 +108,7 @@ const App: React.FC = () => {
     try {
       const csrfToken = Cookies.get('csrftoken') || '';
       console.log('Removing from cart, session_id:', sessionId); // Debug
-      await axios.delete(`http://168.231.93.112:8000/api/cart/${productId}/?session_id=${sessionId}`, {
+      await axios.delete(`http://168.231.93.112/api/cart/${productId}/?session_id=${sessionId}`, {
         headers: { 'X-CSRFToken': csrfToken },
       });
       setCartItems((prevItems) => prevItems.filter((item) => item.product.id !== productId));

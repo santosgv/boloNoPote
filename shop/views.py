@@ -48,8 +48,8 @@ def gerar_pix_qrcode(request):
             
             print(f"Valor: {valor}, Chave PIX: {chave_pix}, String PIX do banco: {string_pix_banco}")  # Log para debug
 
-            if not validar_chave_pix(chave_pix):
-                return JsonResponse({'error': 'Chave PIX inválida'}, status=400)
+            #if not validar_chave_pix(chave_pix):
+            #    return JsonResponse({'error': 'Chave PIX inválida'}, status=400)
                 
             if valor <= 0:
                 return JsonResponse({'error': 'Valor deve ser positivo'}, status=400)
