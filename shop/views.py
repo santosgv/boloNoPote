@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import status
-from .models import Product, CartItem, Order,Category
+from .models import Product, CartItem, Order,Category,Branding
 from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer, CategorySerializer
 from django.conf import settings
 import uuid
@@ -56,6 +56,18 @@ def gerar_pix_qrcode(request):
     
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
+
+def get_branding(request):
+    key = request.GET.get('key', 'default')  # 'default' é o fallback
+    print(f"Fetching branding for key: {key}")  # Debug log
+    try:
+        branding = Branding.objects.get(key=key)
+        return JsonResponse({
+            'logo_url': request.build_absolute_uri(branding.logo.url),
+            'background_url': request.build_absolute_uri(branding.background.url),
+        })
+    except Branding.DoesNotExist:
+        return JsonResponse({'error': f'Branding not found for key: {key}'}, status=404)
 
 class CategoryListView(APIView):
     def get(self, request):

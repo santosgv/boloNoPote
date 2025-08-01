@@ -2,6 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class Branding(models.Model):
+    key = models.CharField(max_length=100, unique=True,default='padrao')
+    name = models.CharField(max_length=100, default='Default Branding')
+    logo = models.ImageField(upload_to='branding/logo/')
+    background = models.ImageField(upload_to='branding/background/')
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
