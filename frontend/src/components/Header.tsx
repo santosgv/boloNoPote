@@ -11,7 +11,7 @@ const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/branding/?key=padrao')
+    axios.get('http://168.231.93.112/api/branding/?key=padrao')
       .then(response => {
         setLogoUrl(response.data.logo_url);
         setBackgroundUrl(response.data.background_url);
