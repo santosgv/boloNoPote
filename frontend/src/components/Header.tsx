@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import { API_BASE } from './config';
 
 interface HeaderProps {
   resetLocation: () => void;
@@ -11,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get('http://168.231.93.112/api/branding/?key=padrao')
+    axios.get( API_BASE +'/api/branding/?key=padrao')
       .then(response => {
         setLogoUrl(response.data.logo_url);
         setBackgroundUrl(response.data.background_url);

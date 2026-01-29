@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import type { Product } from '../types';
+import { API_BASE } from './config';
 
 interface MenuProps {
   categories: { id: number; name: string; products: Product[] }[];
@@ -30,7 +31,7 @@ const Menu: React.FC<MenuProps> = ({ categories, addToCart }) => {
                   >
                     {product.image && (
                       <img
-                        src={product.image}
+                        src={`${API_BASE}${product.image}`}
                         alt={product.name}
                         className="w-full h-48 object-cover"
                       />

@@ -11,6 +11,7 @@ import Checkout from './components/Checkout';
 import Toast from './components/Toast';
 import type { CartItem, Product,Category } from './types';
 import { AnimatePresence } from 'framer-motion';
+import { API_BASE } from '../src/components/config';
 
 // Configure axios to send cookies for CSRF
 axios.defaults.withCredentials = true;
@@ -40,22 +41,22 @@ const App: React.FC = () => {
     }
 
     // Fetch CSRF token
-    axios.get('http://168.231.93.112/api/csrf/')
+    axios.get(API_BASE +'/api/csrf/')
       .then(() => {
         console.log('CSRF cookie set'); // Debug
 
         // Fetch categories
-        axios.get('http://168.231.93.112/api/categories/')
+        axios.get( API_BASE +'/api/categories/')
           .then((response) => setCategories(response.data))
           .catch((error) => console.error('Erro ao buscar categorias:', error));
 
         // Fetch products
-        axios.get('http://168.231.93.112/api/products/')
+        axios.get(API_BASE + '/api/products/')
           .then((response) => setProducts(response.data))
           .catch((error) => console.error('Erro ao buscar produtos:', error));
 
         // Fetch cart items
-        axios.get(`http://168.231.93.112/api/cart/?session_id=${storedSessionId}`)
+        axios.get( API_BASE + `/api/cart/?session_id=${storedSessionId}`)
           .then((response) => setCartItems(response.data))
           .catch((error) => console.error('Erro ao buscar carrinho:', error));
       })
@@ -68,7 +69,7 @@ const App: React.FC = () => {
       const csrfToken = Cookies.get('csrftoken') || '';
       console.log('Adding to cart, session_id:', sessionId); // Debug
       const response = await axios.post(
-        'http://168.231.93.112/api/cart/',
+        API_BASE + '/api/cart/',
         { product_id: product.id, quantity: 1, session_id: sessionId },
         { headers: { 'X-CSRFToken': csrfToken } }
       );
@@ -108,7 +109,7 @@ const App: React.FC = () => {
     try {
       const csrfToken = Cookies.get('csrftoken') || '';
       console.log('Removing from cart, session_id:', sessionId); // Debug
-      await axios.delete(`http://168.231.93.112/api/cart/${productId}/?session_id=${sessionId}`, {
+      await axios.delete( API_BASE + `/api/cart/${productId}/?session_id=${sessionId}`, {
         headers: { 'X-CSRFToken': csrfToken },
       });
       setCartItems((prevItems) => prevItems.filter((item) => item.product.id !== productId));

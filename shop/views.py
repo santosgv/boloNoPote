@@ -29,7 +29,7 @@ def gerar_pix_qrcode(request):
             
             # Cria o payload sem gerar QR Code
             payload = Payload(
-                nome='Vitor dos Santos Gomes',
+                nome='Teste de Pix',
                 chavepix='01858082633',
                 valor=f'{valor}',
                 cidade='Burger House',
@@ -37,6 +37,8 @@ def gerar_pix_qrcode(request):
             )
             
             string_pix = payload.gerarPayload(gerar_qrcode=False)
+
+            print(string_pix)
             
             return JsonResponse({
                 'brcode': string_pix,
@@ -53,6 +55,8 @@ def gerar_pix_qrcode(request):
         except Exception as e:
             print(f"Erro ao processar PIX: {str(e)}")
             return JsonResponse({'error': 'Erro interno ao processar a requisição'}, status=500)
+    
+    print(string_pix)
     
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
