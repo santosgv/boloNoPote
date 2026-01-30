@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
             className="mt-4 text-2xl font-bold text-white text-center"
           >
            <span
-           className='text-shadow-lg'
+           className='text-shadow-lg px-2'
            >{name}</span> 
           </motion.h1>
         </motion.div>
