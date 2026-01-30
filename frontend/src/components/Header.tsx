@@ -49,7 +49,9 @@ const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-4 text-2xl font-bold text-white text-center"
           >
-            {name}
+           <span
+           className='text-shadow-lg'
+           >{name}</span> 
           </motion.h1>
         </motion.div>
       )}

@@ -28,13 +28,14 @@ def gerar_pix_qrcode(request):
             data = json.loads(request.body)
             valor = float(data.get('valor', 0))
             
+            
             # Cria o payload sem gerar QR Code
             payload = Payload(
-                nome=str(dados_loja.name),
+                nome=str(dados_loja.name[:17]),
                 chavepix=str(dados_loja.chavepix),
                 valor=f'{valor}',
                 cidade='Brasil',
-                txtId=str(dados_loja.id)
+                txtId=str(data['session_id'][-5:])
             )
             
             string_pix = payload.gerarPayload(gerar_qrcode=False)
