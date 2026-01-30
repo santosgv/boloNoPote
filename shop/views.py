@@ -22,6 +22,7 @@ def get_csrf_token(request):
 
 @csrf_exempt
 def gerar_pix_qrcode(request):
+    dados_loja = Branding.objects.first()
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -29,11 +30,11 @@ def gerar_pix_qrcode(request):
             
             # Cria o payload sem gerar QR Code
             payload = Payload(
-                nome='Teste de Pix',
-                chavepix='01858082633',
+                nome=str(dados_loja.name),
+                chavepix=str(dados_loja.chavepix),
                 valor=f'{valor}',
-                cidade='Burger House',
-                txtId='LOJA01'
+                cidade='Brasil',
+                txtId=str(dados_loja.id)
             )
             
             string_pix = payload.gerarPayload(gerar_qrcode=False)
