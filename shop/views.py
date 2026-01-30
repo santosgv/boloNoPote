@@ -37,8 +37,6 @@ def gerar_pix_qrcode(request):
             )
             
             string_pix = payload.gerarPayload(gerar_qrcode=False)
-
-            print(string_pix)
             
             return JsonResponse({
                 'brcode': string_pix,
@@ -56,8 +54,6 @@ def gerar_pix_qrcode(request):
             print(f"Erro ao processar PIX: {str(e)}")
             return JsonResponse({'error': 'Erro interno ao processar a requisição'}, status=500)
     
-    print(string_pix)
-    
     return JsonResponse({'error': 'Método não permitido'}, status=405)
 
 
@@ -69,6 +65,7 @@ def get_branding(request):
         return JsonResponse({
             'logo_url': request.build_absolute_uri(branding.logo.url),
             'background_url': request.build_absolute_uri(branding.background.url),
+            'name': (branding.name)
         })
     except Branding.DoesNotExist:
         return JsonResponse({'error': f'Branding not found for key: {key}'}, status=404)

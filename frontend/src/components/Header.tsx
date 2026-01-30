@@ -10,12 +10,14 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
+  const [name, setName] = useState <string | null>(null)
 
   useEffect(() => {
     axios.get( API_BASE +'/api/branding/?key=padrao')
       .then(response => {
         setLogoUrl(response.data.logo_url);
         setBackgroundUrl(response.data.background_url);
+        setName(response.data.name);
       })
       .catch(error => {
         console.error('Erro ao carregar branding:', error);
@@ -47,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ resetLocation }) => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-4 text-2xl font-bold text-white text-center"
           >
-            Burger House
+            {name}
           </motion.h1>
         </motion.div>
       )}
