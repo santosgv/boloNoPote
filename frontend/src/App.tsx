@@ -12,6 +12,7 @@ import Toast from './components/Toast';
 import type { CartItem, Product,Category } from './types';
 import { AnimatePresence } from 'framer-motion';
 import { API_BASE } from '../src/components/config';
+import Dashboard from './components/Dashboard';
 
 // Configure axios to send cookies for CSRF
 axios.defaults.withCredentials = true;
@@ -191,6 +192,7 @@ const App: React.FC = () => {
               </>
             }
           />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
         </Routes>
       </div>
     </Router>

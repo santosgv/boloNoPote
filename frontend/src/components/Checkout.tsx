@@ -53,37 +53,44 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onClose, sessionId }) =>
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!sessionId) {
-      console.error('No session_id available');
-      return;
-    }
-    try {
-      const csrfToken = Cookies.get('csrftoken') || '';
-      console.log('Creating order, session_id:', sessionId); // Debug
-      const response = await axios.post(
-        API_BASE +'/api/order/',
-        {
-          address: {
-            street: address.street,
-            number: address.number,
-            neighborhood: address.neighborhood,
-            city: address.city,
-            state: address.state,
-            zip_code: address.zipCode,
-          },
-          total,
-          session_id: sessionId,
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!sessionId) return;
+
+  try {
+    const csrfToken = Cookies.get('csrftoken') || '';
+    
+    // Preparamos os itens para o backend
+    const items = cartItems.map(item => ({
+      product_id: item.product.id,
+      quantity: item.quantity,
+      price: item.product.price // Enviamos o preço atual
+    }));
+
+    const response = await axios.post(
+      API_BASE + '/api/order/',
+      {
+        address: {
+          street: address.street,
+          number: address.number,
+          neighborhood: address.neighborhood,
+          city: address.city,
+          state: address.state,
+          zip_code: address.zipCode,
         },
-        { headers: { 'X-CSRFToken': csrfToken } }
-      );
-      console.log('Pedido criado:', response.data);
-      window.location.assign("/");
-    } catch (error) {
-      console.error('Erro ao criar pedido:', error);
-    }
-  };
+        total,
+        session_id: sessionId,
+        items: items, // <--- ADICIONADO AQUI
+      },
+      { headers: { 'X-CSRFToken': csrfToken } }
+    );
+
+    console.log('Pedido criado com itens:', response.data);
+    window.location.assign("/");
+  } catch (error) {
+    console.error('Erro ao criar pedido:', error);
+  }
+};
 
     const gerarQrCodePix = async () => {
   try {

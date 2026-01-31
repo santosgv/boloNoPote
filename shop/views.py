@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
+from django.db import transaction
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import status
-from .models import Product, CartItem, Order,Category,Branding
+from .models import Product, CartItem, OrderItem,Category,Branding,Order
+from django.db.models import Avg, Sum, Count
 from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer, CategorySerializer
 from django.conf import settings
 import uuid
@@ -141,22 +143,102 @@ class CartView(APIView):
 class OrderView(APIView):
     def post(self, request):
         session_id = request.data.get('session_id')
+        
         if not session_id:
             return Response(
-                {'error': 'session_id is required'},
+                {'error': 'session_id is required'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = OrderSerializer(data={**request.data, 'session_id': session_id})
-        
-        if serializer.is_valid():
-            cart_items = CartItem.objects.filter(session_id=session_id)
-            total = sum(item.product.price * item.quantity for item in cart_items)
-            serializer.validated_data['total'] = total
-            #serializer.validated_data['pix_key'] =   # Placeholder
-            serializer.validated_data['session_id'] = session_id
 
-            
-            order = serializer.save()
-            cart_items.delete() 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # 1. Buscamos os itens que estão no carrinho deste usuário/sessão
+        cart_items = CartItem.objects.filter(session_id=session_id)
+        
+        if not cart_items.exists():
+            return Response(
+                {'error': 'O carrinho está vazio.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Usamos uma transação para garantir integridade
+        try:
+            with transaction.atomic():
+                # 2. Calculamos o total real baseado nos produtos atuais
+                total = sum(item.product.price * item.quantity for item in cart_items)
+                
+                # 3. Preparamos o serializer (ajuste conforme seu OrderSerializer)
+                serializer = OrderSerializer(data=request.data)
+                
+                if serializer.is_valid():
+                    # Salva a Order enviando o total calculado e o session_id
+                    order = serializer.save(total=total, session_id=session_id)
+
+                    # 4. CRIANDO OS ITENS DO PEDIDO (O que faltava)
+                    for item in cart_items:
+                        OrderItem.objects.create(
+                            order=order,
+                            product=item.product,
+                            quantity=item.quantity,
+                            # Importante: salva o preço do momento da compra!
+                            price_at_purchase=item.product.price 
+                        )
+
+                    # 5. Agora sim, deletamos o carrinho
+                    cart_items.delete() 
+
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            return Response(
+                {'error': f'Erro ao processar pedido: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+@api_view(['GET'])
+def get_dashboard_stats(request):
+    try:
+        # 1. TICKET MÉDIO (Arredondado para 2 casas decimais)
+        ticket_medio_raw = Order.objects.filter(status=2).aggregate(Avg('total'))['total__avg'] or 0
+        ticket_medio = round(float(ticket_medio_raw), 2)
+
+        # 2. PRODUTO QUE MAIS SAI (Formatado para Gráfico)
+        # Transformamos em uma lista simples de dicionários
+        top_produtos_qs = OrderItem.objects.values('product__name') \
+            .annotate(vendas=Sum('quantity')) \
+            .order_by('-vendas')[:5]
+        
+        top_produtos = [
+            {"name": item['product__name'], "vendas": item['vendas']} 
+            for item in top_produtos_qs
+        ]
+
+        # 3. BAIRRO MAIS ATENDIDO
+        # Pegamos o nome do bairro e a contagem de pedidos
+        top_bairros_qs = Order.objects.values('address__neighborhood') \
+            .annotate(pedidos=Count('id')) \
+            .order_by('-pedidos')[:5]
+
+        top_bairros = [
+            {"bairro": item['address__neighborhood'], "pedidos": item['pedidos']} 
+            for item in top_bairros_qs
+        ]
+
+        # 4. TOTAL DE VENDAS (Métrica extra útil)
+        total_vendas = Order.objects.filter(status=2).count()
+
+        return Response({
+            "status": "success",
+            "data": {
+                "total_vendas": total_vendas,
+                "ticket_medio": ticket_medio,
+                "top_produtos": top_produtos,
+                "top_bairros": top_bairros
+            }
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({
+            "status": "error",
+            "message": str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

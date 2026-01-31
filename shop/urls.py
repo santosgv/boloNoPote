@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ProductListView, CartView, OrderView, get_csrf_token, CategoryListView, gerar_pix_qrcode, get_branding
+from .views import ProductListView, CartView, OrderView, get_csrf_token, CategoryListView, gerar_pix_qrcode, get_branding,get_dashboard_stats
 
 urlpatterns = [
     path('branding/', get_branding, name='branding'),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('order/', OrderView.as_view(), name='order'),
     path('csrf/', get_csrf_token, name='csrf'),
     path('gerar-pix/', gerar_pix_qrcode, name='gerar_pix_qrcode'),
+    path('z_admin/', get_dashboard_stats, name='z_admin')
 ]
