@@ -57,6 +57,15 @@ class Address(models.Model):
         return f"{self.street}, {self.number}, {self.city}-{self.state}"
 
 class Order(models.Model):
+    ORDER_TYPE_CHOICES = [
+        ('delivery', 'Entrega'),
+        ('pickup', 'Retirada'),
+    ]
+    order_type = models.CharField(
+        max_length=10, 
+        choices=ORDER_TYPE_CHOICES, 
+        default='delivery'
+    )
 
     CHOICES_SITUACAO =(
         ('1','Pendente'),
@@ -67,7 +76,7 @@ class Order(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     session_id = models.CharField(max_length=100, null=True, blank=True)
-    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=1, choices=CHOICES_SITUACAO ,default='1')

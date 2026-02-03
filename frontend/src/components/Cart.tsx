@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaShoppingCart } from 'react-icons/fa';
+import { FaShoppingCart, FaMotorcycle, FaStore } from 'react-icons/fa';
 import type { CartItem } from '../types';
 
 interface CartProps {
   cartItems: CartItem[];
   removeFromCart: (productId: number) => void;
-  openCheckout: () => void; // Nova prop para abrir o modal
+  openCheckout: (type: 'delivery' | 'pickup') => void;
 }
 
 const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, openCheckout }) => {
@@ -79,14 +79,14 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, openCheckout }) 
                       Total: R$ {total.toFixed(2)}
                     </p>
                     <button
-                      onClick={() => {
-                        openCheckout();
-                        setIsCartOpen(false); // Fecha o carrinho em mobile
-                      }}
-                      className="mt-4 block px-4 py-2 bg-green-500 text-white rounded-lg text-center hover:bg-red hover:text-white transition-colors"
-                    >
-                      Finalizar Compra
-                    </button>
+                        onClick={() => {
+                          openCheckout('delivery');
+                          setIsCartOpen(false);
+                        }}
+                        className="flex items-center justify-center gap-1 px-2 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-all width300m"
+                      >
+                        <FaMotorcycle /> Delivery (Entrega)
+                      </button>
                   </div>
                 </div>
               )}

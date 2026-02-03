@@ -25,6 +25,7 @@ const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  
 
   useEffect(() => {
     // Initialize session_id from localStorage or generate new

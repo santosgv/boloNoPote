@@ -85,6 +85,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       { headers: { 'X-CSRFToken': csrfToken } }
     );
 
+    alert('Pedido criado com sucesso!');
     console.log('Pedido criado com itens:', response.data);
     window.location.assign("/");
   } catch (error) {
